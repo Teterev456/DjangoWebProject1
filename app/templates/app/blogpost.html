@@ -1,0 +1,48 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+
+<h3> {{post_1.title}} </h3>
+
+<div class="MainText">
+    <br>
+    {% if post_1.image and post_1.image.url != '/media/temp.jpg' %}
+    <img id="blog_img" src="{{ post_1.image.url }}" alt=" Картинка статьи блога " width="200">
+    {% endif %}
+    <br>
+    <p> {{post_1.content|linebreaksbr}} </p>      {# вывод текста по абзацам#}
+    <p id="author_name"> {{post_1.author}} </p>
+</div>
+<br>
+<h5 class="blog_url"><a href="{% url 'blog' %}"> НАЗАД </a> </h5>
+{% if user.is_authenticated %}
+
+<h3>Добавить комментарий</h3>
+<br>
+<form method="POST" >{% csrf_token %} {# защита от атак CSRF#}
+    <div>
+        {{form.as_p}}
+        <button type="submit" class="save btn btn-default" > Отправить комментарий </button>
+    </div>
+</form>
+
+{% else %}
+
+<h3 id="comment_add"> Для добавления своего комментария, пожалуйста, авторизуйтесь </h3>
+
+{% endif %}
+
+{% for comment in comments %}
+
+<hr/>
+<div id="comment">
+    <h7> {{comment.date}} </h7>
+    <h5> {{comment.author}} </h5>
+    <p> {{comment.text|linebreaksbr}} </p>
+</div>
+
+
+{% endfor %}
+
+{% endblock %}

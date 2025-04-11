@@ -1,0 +1,111 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+{% if form != None %}
+<br><h2>Отправьте пожалуйста заполненную анкету:</h2><br>
+<div>
+    <form method="post">
+        {% csrf_token %}
+        <label for="{{ form.name.id_for_label }}>">{{ form.name.label }}:</label>
+        {{ form.name }}<br><br>
+        <label for="{{ form.city.id_for_label }}>">{{ form.city.label }}:</label>
+        {{ form.city }}<br>
+        <label for="{{ form.gender.id_for_label }}>">{{ form.gender.label }}:</label>
+        {{ form.gender }}
+        <label for="{{ form.job.id_for_label }}>">{{ form.job.label }}:</label><br>
+        {{ form.job }}<br><br>
+        <label for="{{ form.comfort.id_for_label }}>">{{ form.comfort.label }}:</label><br>
+        {{ form.comfort }}<br><br>
+        <label for="{{ form.notice.id_for_label }}>">{{ form.notice.label }}:</label>
+        {{ form.notice }}<br><br>
+        <label for="{{ form.email.id_for_label }}>">{{ form.email.label }}:</label>
+        {{ form.email }}<br><br>
+        <label for="{{ form.message.id_for_label }}>">{{ form.message.label }}:</label><br>
+        {{ form.message }}<br><br>
+        <input id="submit" type="submit" value="Отправить">
+        <script>
+            function submit_mouseover()
+            {
+                $('#submit').css('color', 'green');
+            }
+            function submit_mouseout()
+            {
+                $('#submit').css('color', 'black');
+            }
+            $('#submit').mouseover(submit_mouseover);
+            $('#submit').mouseout(submit_mouseout);
+
+            function name_focus()
+            {
+                $('#id_name').css('background-color', 'orange');
+            }
+            function name_blur()
+            {
+                $('#id_name').css('background-color', 'white');
+            }
+            $('#id_name').focus(name_focus);
+            $('#id_name').blur(name_blur);
+
+            function city_focus()
+            {
+                $('#id_city').css('background-color', 'orange');
+            }
+            function city_blur()
+            {
+                $('#id_city').css('background-color', 'white');
+            }
+            $('#id_city').focus(city_focus);
+            $('#id_city').blur(city_blur);
+
+            function job_focus()
+            {
+                $('#id_job').css('background-color', 'orange');
+            }
+            function job_blur()
+            {
+                $('#id_job').css('background-color', 'white');
+            }
+            $('#id_job').focus(job_focus);
+            $('#id_job').blur(job_blur);
+
+            function email_focus()
+            {
+                $('#id_email').css('background-color', 'orange');
+            }
+            function email_blur()
+            {
+                $('#id_email').css('background-color', 'white');
+            }
+            $('#id_email').focus(email_focus);
+            $('#id_email').blur(email_blur);
+
+            function message_focus()
+            {
+                $('#id_message').css('background-color', 'orange');
+            }
+            function message_blur()
+            {
+                $('#id_message').css('background-color', 'white');
+            }
+            $('#id_message').focus(message_focus);
+            $('#id_message').blur(message_blur);
+        </script>
+    </form>
+</div>
+{% else %}
+
+<br><h2>Благодарим за предоставленную информацию!</h2><br>
+<h3>Вы сообщили о себе следующее:</h3>
+<ul>
+    <li><span>Имя:</span> {{ data.name }}</li>
+    <li><span>Город:</span> {{ data.city }}</li>
+    <li><span>Пол:</span> {{ data.gender }}</li>
+    <li><span>Работа:</span> {{ data.job }}</li>
+    <li><span>В интернете:</span> {{ data.internet }}</li>
+    <li><span>Получать новости сайта на e-mail:</span> {{ data.notice }}</li>
+    <li><span>Ваш e-mail:</span> {{ data.email }}</li>
+    <li><span>Информация о себе:</span> {{ data.message }}</li>
+</ul>
+{% endif %}
+{% endblock %}
