@@ -1,0 +1,68 @@
+.cards {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.cards__card {
+    position: relative;
+    width: 350px;
+    height: 500px;
+    border: solid 2px #808080;
+    background-color: azure;
+    border-radius: 8px;
+}
+
+.cards__card-title {
+    display:flex;
+    justify-content:center;
+}
+
+.cards__card-img{
+    margin-top: 20px;
+    border-radius: 2px;
+}
+
+.cards__card-description {
+    margin-left: 10px;
+}
+
+.cards__card-read-more {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
+    left: 20%;
+    border: solid 2px #808080;
+    border-radius: 4px;
+    text-decoration: none;
+    background-color: bisque;
+    cursor: pointer;
+}
+
+.cards__card-href, .cards__card-href:hover {
+    text-decoration: none;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    margin: 6px;
+}
+
+.cards__card-href:hover{
+    color: white;
+}
+
+.cards__card-read-more:hover {
+    background-color:chocolate;
+}
+
+.catalog__form {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.catalog__filter {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}

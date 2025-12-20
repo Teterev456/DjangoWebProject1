@@ -3,12 +3,14 @@ Definition of views.
 """
 
 from datetime import datetime
+from mailbox import Message
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
-from .forms import AnketaForm 
+from .forms import AnketaForm, OrderCommentForm, OrderForm 
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
-from .models import Blog
+from django.contrib import messages
+from .models import Blog, CardsProduct, Order
 from .models import Comment # использование модели комментариев
 from .forms import CommentForm # использование формы ввода комментария
 from .forms import BlogForm
@@ -24,6 +26,116 @@ def home(request):
             'year':datetime.now().year,
         }
     )
+
+def catalog(request):
+    """Renders the catalog page."""
+    assert isinstance(request, HttpRequest)
+    category = request.GET.get('category', 'all')
+    cards = CardsProduct.objects.all()
+    if category != 'all':
+        cards = cards.filter(category=category)
+    categories = [choice[0] for choice in CardsProduct.CATEGORY_CHOICES]
+    return render(
+        request,
+        'app/catalog.html',
+        {
+            'title':'Каталог',
+            'cards': cards,
+            'selected_category': category,
+            'categories': categories,
+            'year':datetime.now().year,
+        }
+    )
+
+
+def detailcard(request, parametr):
+    """Renders the detailcard page."""
+    assert isinstance(request, HttpRequest)
+    card_1 = CardsProduct.objects.get(id=parametr)
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.service = card_1
+            order.cost = card_1.cost
+            if request.user.is_authenticated:
+                order.user = request.user
+            order.save()
+            messages.success(
+                request, 
+                f'Заказ успешно оформлен! Номер вашего заказа: #{order.id}. '
+                f'Мы свяжемся с вами в ближайшее время.'
+            )
+            return redirect('catalog')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = OrderForm()
+    
+    return render(
+        request,
+        'app/detailcard.html',
+        {
+            'card_1': card_1,
+            'OrderForm': form,
+            'title': card_1.title,
+            'year': datetime.now().year,
+        }
+    )
+
+def myorders(request):
+    """Renders the myorders page."""
+    assert isinstance(request, HttpRequest)
+    orders = Order.objects.filter(user=request.user).select_related('service')
+    status_filter = request.GET.get('status', 'all')
+    if status_filter != 'all':
+        orders = orders.filter(status=status_filter)
+    
+    return render(request, 'app/myorders.html', {
+        'orders': orders,
+        'current_filter': status_filter,
+        'title': 'Мои заказы',
+        'year': datetime.now().year,
+    })
+
+def orderdetail(request, order_number):
+    """Renders the orderdetail page."""
+    assert isinstance(request, HttpRequest)
+    order = Order.objects.get(Order, order_number=order_number, user=request.user)
+    comment_form = OrderCommentForm()
+    comments = order.comments.filter(is_visible=True).order_by('created_at')
+
+    return render(request, 'app/order_detail.html', {
+        'order': order,
+        'comments': comments,
+        'comment_form': comment_form,
+        'title': f'Заказ {order.order_number}',
+        'year': datetime.now().year,
+    })
+
+def add_order_comment(request, order_number):
+    assert isinstance(request, HttpRequest)
+    order = Order.objects.get(Order, order_number=order_number)
+
+    if order.user != request.user and not request.user.is_staff:
+        messages.error(request, 'У вас нет доступа к этому заказу')
+        return redirect('user_orders')
+    
+    if request.method == 'POST':
+        form = OrderCommentForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.order = order
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Комментарий добавлен!')
+            return redirect('order_detail', order_number=order_number)
+        else:
+            messages.error(request, 'Ошибка при добавлении комментария')
+    
+    return redirect('order_detail', order_number=order_number)
 
 def contact(request):
     """Renders the contact page."""

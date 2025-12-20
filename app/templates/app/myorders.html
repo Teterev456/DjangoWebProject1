@@ -1,0 +1,60 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="my-orders">
+    <h1 class="my-orders__title">Ваши заказы</h1>
+
+    {% if user.is_authenticated %}
+
+        {% for order in orders %}
+
+        <hr />
+        <div class="my-orders__order">
+            <div class="my-orders__order-info">
+                <p>Заказ № {{order.order_number}} </p>
+                <p>Выбранная услуга - {{order.service}} </p>
+                <p>Статус заказа - {{order.status}} </p>
+                <p>Дата заказа - {{order.date}} </p>
+                {% if order.manager_comment %}
+                <p>Предоплата - {{order.prepayment}} </p>
+                <p>Стоимость заказа (с вычетом предоплаты) - {{order.price}} </p>
+                {% endif %}
+                <p>Общая стоимость заказа - {{order.price}} </p>
+            </div>
+            <div class="my-orders__order-comment">
+                <p>Комментарии к заказу</p>
+
+                {% for comment in orders %}
+
+
+
+                {% endfor %}
+
+                <div class="my-orders__order-comment-form">
+                    <p>Оставить комментарий к заказу</p>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div>
+                            {{ OrderCommentForm.as_p }}
+                            <button type="submit" class="save btn btn-default"> Оставить комментарий </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if order.manager_comment %}
+                <p>Комментарий менеджера - {{order.manager_comment}} </p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+    <h3> Для просмотра своих заказов, пожалуйста, авторизуйтесь </h3>
+
+    {% endif %}
+</div>
+
+{% endblock %}

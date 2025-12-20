@@ -2,6 +2,7 @@
 Definition of models.
 """
 
+from django.utils import timezone as tz
 from django.db import models
 from django.contrib import admin
 from datetime import datetime
@@ -49,5 +50,117 @@ class Comment(models.Model):
         ordering = ["-date"]
         verbose_name = "Комментарий к статье блога"
         verbose_name_plural = "Комментарии к статьям блога"
-    
+
 admin.site.register(Comment)
+
+class CardsProduct(models.Model):
+    image = models.ImageField(default = '', verbose_name = "Изображение товара")
+    title = models.CharField(max_length = 100, unique = True, verbose_name = "Заголовок")
+    description = models.TextField(verbose_name = "Краткое содержание")
+    content = models.TextField(verbose_name = "Полное содержание")
+    cost = models.DecimalField(max_digits = 10, default = 100.00, verbose_name="Цена", decimal_places = 2)
+    is_available = models.BooleanField(default = True, verbose_name = "В наличии")
+    CATEGORY_CHOICES = [('photo_sessions', 'Фотосессии'),('printed_products', 'Печатная продукция'),('service_packages', 'Пакеты услуг'),]
+    category = models.CharField(max_length=50,choices=CATEGORY_CHOICES,default='photo_sessions',verbose_name='Категория')
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('product_detail', kwargs={'pk': self.pk})
+
+    class Meta:
+        db_table = "Catalog"
+        verbose_name = "Карточка товара"
+        verbose_name_plural = "Карточки товаров"
+
+admin.site.register(CardsProduct)
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название категории")
+    slug = models.SlugField(unique=True, verbose_name="URL-имя")
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+admin.site.register(Category)
+
+class Order(models.Model):
+    STATUS_CHOICES = [('new', 'Новый'),
+        ('processing', 'В обработке'),
+        ('confirmed', 'Подтвержден'),
+        ('in_progress', 'В работе'),
+        ('completed', 'Завершен'),
+        ('cancelled', 'Отменен'),]
+
+    service = models.ForeignKey(CardsProduct, on_delete=models.CASCADE, verbose_name="Услуга", related_name='orders')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Пользователь")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', verbose_name="Статус")
+
+    customer_name = models.CharField(max_length=200, verbose_name="Имя")
+    customer_email = models.EmailField(verbose_name="Email")
+    customer_phone = models.CharField(max_length=20, verbose_name="Телефон")
+    customer_message = models.TextField(verbose_name="Сообщение", blank=True)
+
+    date = models.DateTimeField(default = datetime.now(), db_index = True, verbose_name = "Дата заказа")
+    order_number = models.CharField(max_length=20, unique=True, verbose_name="Номер заказа")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Итоговая цена")
+    prepayment = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Предоплата")
+    manager_comment = models.TextField(verbose_name="Комментарий менеджера", blank=True)
+
+    def __str__(self):
+        return f"Заказ {self.order_number} - {self.service.title}"
+    
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            date_str = tz.now().strftime("%Y%m%d")
+            last_order = Order.objects.filter(order_number__startswith=date_str).order_by('order_number').last()
+            if last_order:
+                last_num = int(last_order.order_number[-4:])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+            self.order_number = f"{date_str}-{new_num:04d}"
+        if not self.price:
+            self.price = self.service.cost
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('order_detail', kwargs={'order_number': self.order_number})
+
+    class Meta:
+        db_table = "Orders"
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        ordering = ['-date']
+
+admin.site.register(Order)
+
+class OrderComment(models.Model):
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='comments', verbose_name="Заказ")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", null=True, blank=True)
+    
+    text = models.TextField(verbose_name="Текст комментария")
+    is_edited = models.BooleanField(default=False, verbose_name="Редактирован")
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    
+    file = models.FileField(upload_to='order_comments/%Y/%m/%d/', blank=True, null=True, verbose_name="Файл")
+    
+    def __str__(self):
+        return f"Комментарий к заказу #{self.order.id}"
+
+    class Meta:
+        db_table = "OrderComments"
+        verbose_name = "Комментарий к заказу"
+        verbose_name_plural = "Комментарии к заказам"
+        ordering = ['-created_at']
+
+admin.site.register(OrderComment)
+

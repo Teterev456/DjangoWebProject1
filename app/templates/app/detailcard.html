@@ -1,0 +1,51 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="detailcard">
+    <h3 class="detailcard__title"> {{card_1.title}} </h3>
+    <div class="detailcard__info">
+        <img class="detailcard__info-image" src="{{ card_1.image.url }}" alt="Картинка товара" width="600">
+        <p class="detailcard__info-content">
+            {{card_1.content}}
+        </p>
+    </div>
+    <div class="detailcard__purchase">
+        <h3>Оформить заказ</h3>
+        {% if user.is_authenticated %}
+
+            {% if card_1.is_available %}
+
+            <div class="detailcard__purchase-available">
+                <p class="detailcard__purchase-cost">Стоимость услуги - {{card_1.cost}}</p>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div>
+                        {{ OrderForm.as_p }}
+                        <button type="submit" class="save btn btn-default"> Оформить заказ </button>
+                    </div>
+                </form>
+            </div>
+
+
+            {% else %}
+
+            <div class="detailcard__purchase-not-available">
+                <p class="detailcard__purchase-not-available-message">Нет в наличии</p>
+            </div>
+
+            {% endif %}
+
+        {% else %}
+
+        <h3> Для оформления заказа , пожалуйста, авторизуйтесь </h3>
+
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

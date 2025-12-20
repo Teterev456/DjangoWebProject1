@@ -1,0 +1,42 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+<div>
+    <h1>Каталог:</h1>
+    <div class="catalog__filter">
+        <form class="catalog__form" method="get" action="">
+            <p>Выбор категории: </p>
+            <select class="catalog__select" name="category" onchange="this.form.submit()">
+                <option value="all" {% if selected_category == 'all' %} selected {% endif %}>
+                    Все
+                </option>
+                <option value="photo_sessions" {% if selected_category == 'photo_sessions' %} selected {% endif %}>
+                    Фотосессии
+                </option>
+                <option value="printed_products" {% if selected_category == 'printed_products' %} selected {% endif %}>
+                    Печатная продукция
+                </option>
+                <option value="service_packages" {% if selected_category == 'service_packages' %} selected {% endif %}>
+                    Пакеты услуг
+                </option>
+            </select>
+        </form>
+    </div>
+
+
+    <div class="cards">
+        {% for card in cards %}
+        <div class="cards__card">
+            <img class="cards__card-img" src="{{ card.image.url }}" alt="Картинка товара" width="300" >
+            <h2 class="cards__card-title"> {{card.title}} </h2>
+            <hr />
+            <p class="cards__card-description"> {{card.description}} </p>
+            <br />
+            <div class="cards__card-read-more">
+                <a class="cards__card-href" href="{% url 'detailcard' parametr=card.id %}"> Перейти к оформлению </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

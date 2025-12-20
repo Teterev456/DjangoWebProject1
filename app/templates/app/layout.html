@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="../../static/app/content/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/cards.css' %}" />
     <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
     <script src="{% static 'app/scripts/jquery-1.10.2.js' %}"></script>
 </head>
@@ -31,17 +32,17 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'home' %}">Главная страница</a></li>
+                    <li><a href="{% url 'catalog' %}">Каталог</a></li>
                     <li><a href="{% url 'blog' %}">Блог</a></li>
                     <li><a href="{% url 'about' %}">О нас</a></li>
-                    <li><a href="{% url 'contact' %}">Полезные ссылки</a></li>
                     <li><a href="{% url 'contacts' %}">Контактная информация</a></li>
                     <li><a href="{% url 'pool' %}">Обратная связь</a></li>
+                    <li><a href="{% url 'myorders' %}">Мои заказы</a></li>
                     {% if user.is_superuser %}
-                        <li><a href="{% url 'newpost' %}">Добавить статью</a></li>
+                    <li><a href="{% url 'newpost' %}">Добавить статью</a></li>
                     {% endif %}
-                    <li><a href="{% url 'videopost' %}">Видео</a></li>
                     {% if not user.is_authenticated %}
-                        <li><a href="{% url 'registration' %}">Регистрация</a></li>
+                    <li><a href="{% url 'registration' %}">Регистрация</a></li>
                     {% endif %}
                 </ul>
                 {% include 'app/loginpartial.html' %}
