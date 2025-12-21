@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import posixpath
+from pyexpat.errors import messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -107,6 +108,8 @@ TIME_ZONE = 'UTC'
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
 DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

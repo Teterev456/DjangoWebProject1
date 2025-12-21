@@ -4,9 +4,9 @@ Definition of views.
 
 from datetime import datetime
 from mailbox import Message
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpRequest
-from .forms import AnketaForm, OrderCommentForm, OrderForm 
+from .forms import AnketaForm, ManagerCommentForm, ManagerOrderForm, OrderCommentForm, OrderForm 
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django.contrib import messages
@@ -14,6 +14,7 @@ from .models import Blog, CardsProduct, Order
 from .models import Comment # использование модели комментариев
 from .forms import CommentForm # использование формы ввода комментария
 from .forms import BlogForm
+
 
 def home(request):
     """Renders the home page."""
@@ -85,34 +86,58 @@ def detailcard(request, parametr):
     )
 
 def myorders(request):
-    """Renders the myorders page."""
-    assert isinstance(request, HttpRequest)
-    orders = Order.objects.filter(user=request.user).select_related('service')
-    status_filter = request.GET.get('status', 'all')
-    if status_filter != 'all':
-        orders = orders.filter(status=status_filter)
+    orders = Order.objects.filter(user=request.user).order_by('-date')
+    order_forms = []  # Список для хранения (заказ, форма)
     
-    return render(request, 'app/myorders.html', {
-        'orders': orders,
-        'current_filter': status_filter,
-        'title': 'Мои заказы',
-        'year': datetime.now().year,
-    })
+    if request.method == "POST":
+        order_id = request.POST.get('order_id')
+        order = get_object_or_404(Order, id=order_id, user=request.user)
+        
+        form = OrderCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.order = order
+            comment.author = request.user
+            comment.save()
+            messages.success(request, f"Комментарий к заказу #{order.order_number} добавлен!")
+            return redirect('myorders')
+        else:
+            # Если ошибка валидации - сохраняем форму с ошибками для этого заказа
+            for o in orders:
+                if o.id == int(order_id):
+                    order_forms.append((o, form))
+                else:
+                    order_forms.append((o, OrderCommentForm()))
+    else:
+        # Для GET-запроса все пустые формы
+        for order in orders:
+            order_forms.append((order, OrderCommentForm()))
+    
+    return render(request, 'app/myorders.html', {'order_forms': order_forms})
 
 def orderdetail(request, order_number):
-    """Renders the orderdetail page."""
-    assert isinstance(request, HttpRequest)
-    order = Order.objects.get(Order, order_number=order_number, user=request.user)
-    comment_form = OrderCommentForm()
-    comments = order.comments.filter(is_visible=True).order_by('created_at')
+    if not request.user.is_authenticated:
+        return redirect('login')
 
-    return render(request, 'app/order_detail.html', {
+    order = get_object_or_404(Order, order_number=order_number)
+
+    if request.method == "POST":
+        form = OrderCommentForm(request.POST, request.FILES)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.order = order
+            comment.author = request.user
+            comment.save()
+            return redirect('order_detail', order_number=order_number)
+    else:
+        form = OrderCommentForm()
+    
+    context = {
         'order': order,
-        'comments': comments,
-        'comment_form': comment_form,
-        'title': f'Заказ {order.order_number}',
-        'year': datetime.now().year,
-    })
+        'OrderCommentForm': form,
+        'comments': order.comments.all()
+    }
+    return render(request, 'app/orderdetail.html', context)
 
 def add_order_comment(request, order_number):
     assert isinstance(request, HttpRequest)
@@ -308,3 +333,60 @@ def newpost(request):
             'year': datetime.now().year,
         }
     )
+
+def is_manager(user):
+    """Проверка прав менеджера"""
+    return user.is_authenticated and (
+        user.is_superuser or 
+        user.groups.filter(name='Managers').exists()
+    )
+
+
+def manager_dashboard(request):
+    orders = Order.objects.all().order_by('-date')
+    status_filter = request.GET.get('status')
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+    context = {
+        'orders': orders,
+        'status_choices': Order.STATUS_CHOICES,
+        'current_status': status_filter
+    }
+    # Путь к шаблону в app/manager/
+    return render(request, 'app/manager/dashboard.html', context)
+
+def manager_order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_form = ManagerOrderForm(instance=order)
+    comment_form = ManagerCommentForm()
+
+    if request.method == "POST":
+        form_type = request.POST.get('form_type')
+        
+        if form_type == 'order':
+            order_form = ManagerOrderForm(request.POST, instance=order)
+            if order_form.is_valid():
+                order_form.save()
+                messages.success(request, f"Статус заказа №{order.order_number} обновлен!")
+                # ПРАВИЛЬНЫЙ редирект с параметром order_id
+                return redirect('manager_order_detail', order_id=order_id)
+        
+        elif form_type == 'comment':
+            comment_form = ManagerCommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.order = order
+                comment.author = request.user
+                comment.save()
+                messages.success(request, "Комментарий добавлен!")
+                return redirect('manager_order_detail', order_id=order_id)
+    
+    context = {
+        'order': order,
+        'order_form': order_form,
+        'comment_form': comment_form,
+        'comments': order.comments.all().order_by('-created_at')
+    }
+    # Путь к шаблону в app/manager/
+    return render(request, 'app/manager/order_detail.html', context)
+

@@ -1,0 +1,36 @@
+﻿{% extends "app/layout.html" %}
+{% block content %}
+<div class="manager-dashboard">
+    <h1 class="manager-dashboard__title">Панель менеджера</h1>
+
+    <div class="manager-dashboard__cards">
+        {% for order in orders %}
+        <div class="manager-dashboard__card">
+            <div class="manager-dashboard__card-info">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="manager-dashboard__card-title">Заказ №{{ order.order_number }}</h3>
+                    <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Клиент:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Услуга:</strong> {{ order.service.title }}</p>
+                    <p><strong>Стоимость:</strong> {{ order.price }} ₽</p>
+
+                    {% if order.manager_comment %}
+                    <div class="alert alert-info mt-3">
+                        <strong>Комментарий менеджера:</strong>
+                        <p class="mb-0">{{ order.manager_comment }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'manager_order_detail' order.id %}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

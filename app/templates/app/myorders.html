@@ -1,60 +1,73 @@
 ﻿{% extends "app/layout.html" %}
-
 {% block content %}
-
 <div class="my-orders">
     <h1 class="my-orders__title">Ваши заказы</h1>
 
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
     {% if user.is_authenticated %}
-
-        {% for order in orders %}
-
-        <hr />
-        <div class="my-orders__order">
-            <div class="my-orders__order-info">
-                <p>Заказ № {{order.order_number}} </p>
-                <p>Выбранная услуга - {{order.service}} </p>
-                <p>Статус заказа - {{order.status}} </p>
-                <p>Дата заказа - {{order.date}} </p>
-                {% if order.manager_comment %}
-                <p>Предоплата - {{order.prepayment}} </p>
-                <p>Стоимость заказа (с вычетом предоплаты) - {{order.price}} </p>
-                {% endif %}
-                <p>Общая стоимость заказа - {{order.price}} </p>
+    {% for order, form in order_forms %}
+    <div class="MainText">
+        <div class="my-orders__card-title">
+            <h2 class="my-orders__card-title-text">Заказ №{{ order.order_number }}</h2>
+        </div>
+        <div class="my-orders__card-info">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Услуга:</strong> {{ order.service.title }}</p>
+                    <p><strong>Статус:</strong> {{ order.get_status_display }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Дата:</strong> {{ order.date|date:"d.m.Y H:i" }}</p>
+                    <p><strong>Стоимость:</strong> {{ order.price }} ₽</p>
+                </div>
             </div>
-            <div class="my-orders__order-comment">
-                <p>Комментарии к заказу</p>
-
-                {% for comment in orders %}
-
-
-
+            <br />
+            <div class="my-orders__card-comments">
+                <h3 class="my-orders__card-comments-title">Комментарии:</h3>
+                {% for comment in order.comments.all.reverse %}
+                <div class="border p-2 rounded mb-2">
+                    <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                    <p class="mb-1">
+                        <strong>{{ comment.author.username }}:</strong>
+                        {{ comment.text }}
+                    </p>
+                </div>
+                {% empty %}
+                <p class="text-muted">Комментариев пока нет</p>
                 {% endfor %}
+            </div>
+            <br />
+            <form class="my-orders__card-form" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value="{{ order.id }}">
 
-                <div class="my-orders__order-comment-form">
-                    <p>Оставить комментарий к заказу</p>
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div>
-                            {{ OrderCommentForm.as_p }}
-                            <button type="submit" class="save btn btn-default"> Оставить комментарий </button>
-                        </div>
-                    </form>
+                <div class="mb-3">
+                    {{ form.text.label_tag }}
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                    <div class="text-danger mt-1">{{ form.text.errors }}</div>
+                    {% endif %}
                 </div>
 
-                {% if order.manager_comment %}
-                <p>Комментарий менеджера - {{order.manager_comment}} </p>
-                {% endif %}
-            </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-chat"></i> Отправить комментарий
+                </button>
+            </form>
         </div>
-
-        {% endfor %}
-
+    </div>
+    {% endfor %}
     {% else %}
-
-    <h3> Для просмотра своих заказов, пожалуйста, авторизуйтесь </h3>
-
+    <div class="alert alert-info">
+        <p>Для просмотра и комментирования заказов <a href="{% url 'login' %}" class="alert-link">авторизуйтесь</a></p>
+    </div>
     {% endif %}
 </div>
-
 {% endblock %}

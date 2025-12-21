@@ -1,0 +1,24 @@
+.main-page__title {
+    margin-top: 30px;
+    font-family: Montserrat, Bold;
+}
+
+.main-page__info {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 50px
+}
+
+.main-page__info-image{
+    float: left;
+}
+
+.main-page__info-text {
+    margin-left: 80px;
+    text-indent: 3em;
+    padding: 10px;
+}
+
+.main-page__subtitle{
+    margin-bottom: 30px;
+}

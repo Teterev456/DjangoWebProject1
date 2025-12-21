@@ -3,77 +3,92 @@
 
 {% block content %}
 
-<h1>Главная страница:</h1>
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-        <li data-target="#myCarousel" data-slide-to="3"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="{% static 'app/content/photo/banner1.jpg'%} " alt="Первый слайд" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Внедрение высоких технологий в медицину
-                    <br>
-                    <a class="btn btn-default" href="{% url 'blogpost' parametr=1 %}">
-                        Читать далее
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="{% static 'app/content/photo/banner2.jpg'%}" alt="Второй слайд"  class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Расширение применения ИИ в Москве
-                    <br>
-                    <a class="btn btn-default" href="{% url 'blogpost' parametr=2 %}">
-                        Читать далее
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src=" {% static 'app/content/photo/banner3.png'%} " alt="Третий слайд"  class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Развитие наноробототехники в медицине
-                    <br>
-                    <a class="btn btn-default" href="{% url 'blogpost' parametr=3 %}">
-                        Читать далее
-                    </a>
-                </p>
-            </div>
+<div class="main-page">
+    <h1 class="main-page__title">Главная страница:</h1>
+
+    <div class="main-page__info">
+        <img src="media/index.jpg" class="main-page__info-image" width="500" height="700" />
+
+        <div class="main-page__info-txt">
+            <p class="main-page__info-text">
+                Добро пожаловать в мир профессиональной фотографии вместе с Лерой!
+                Я — фотограф из Пскова с опытом создания запоминающихся образов и живых портретов.
+                За моими работами следят более 296 человек, которые ценят искренность и мастерство в каждом кадре.
+            </p>
+            <p class="main-page__info-text">
+                Моя специализация — портретная съемка, где я стараюсь передать не просто внешность, а настоящую эмоцию и характер человека.
+            </p>
+            <p class="main-page__info-text">
+                Примеры моих работ вы можете посмотреть в специальном разделе портретов, где собраны лучшие снимки,
+                демонстрирующие мой авторский стиль и подход к фотографии. Доверьте мне ваш образ, и я создам фотографии,
+                которые будут радовать вас долгие годы!
+            </p>
         </div>
     </div>
 
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
+    <div class="main-page__carousel">
+        <h3 class="main-page__subtitle">
+            Последние новости на сайте
+        </h3>
 
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
+        <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+                <li data-target="#myCarousel" data-slide-to="3"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <img src="{% static 'app/content/photo/banner1.jpg'%} " alt="Первый слайд" class="img-responsive" />
+                    <div class="carousel-caption" role="option">
+                        <p>
+                            Внедрение высоких технологий в медицину
+                            <br>
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=1 %}">
+                                Читать далее
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{% static 'app/content/photo/banner2.jpg'%}" alt="Второй слайд" class="img-responsive" />
+                    <div class="carousel-caption" role="option">
+                        <p>
+                            Расширение применения ИИ в Москве
+                            <br>
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=2 %}">
+                                Читать далее
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src=" {% static 'app/content/photo/banner3.png'%} " alt="Третий слайд" class="img-responsive" />
+                    <div class="carousel-caption" role="option">
+                        <p>
+                            Развитие наноробототехники в медицине
+                            <br>
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=3 %}">
+                                Читать далее
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-<div class="MainText">
-    <p class="tab">
-        Добро пожаловать на сайт <b>PharmaVista</b> — ваш надежный источник актуальной информации о лекарствах, медицинских исследованиях и последних достижениях в области здравоохранения.
-        Мы предлагаем самые свежие новости, научные публикации, обзоры препаратов и аналитику на темы, связанные с фармацевтикой.
-        Наша цель — обеспечить вас знаниями, которые помогут ориентироваться в мире лекарств и принимать взвешенные решения для улучшения здоровья.
-    </p>
-    <hr>
-    <p class="tab">
-        <b>PharmaVista</b> собирает для вас только проверенные данные, которые проходят тщательную экспертизу.
-        Мы публикуем материалы, основанные на самых последних исследованиях, и следим за тем, чтобы каждый текст был понятен и полезен для наших читателей.
-        Независимо от того, интересуют ли вас новинки фармацевтики или подробности о клинических испытаниях,
-        у нас вы найдете нужную информацию, представленную доступным и понятным языком.
-    </p>
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+    
 </div>
 
 {% endblock %}

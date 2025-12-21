@@ -77,35 +77,33 @@ class OrderForm(forms.ModelForm):
 class OrderCommentForm(forms.ModelForm):
     class Meta:
         model = OrderComment
-        fields = ['text', 'file']
+        fields = ['text']
         widgets = {
             'text': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Введите ваш комментарий или вопрос по заказу...',
+                'rows': 3,
+                'placeholder': 'Ваш комментарий или вопрос по заказу...',
                 'required': True
-            }),
-            'file': forms.FileInput(attrs={
-                'class': 'form-control',
-                'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png'
             })
         }
         labels = {
-            'text': 'Ваш комментарий',
-            'file': 'Прикрепить файл (опционально)'
+            'text': 'Комментарий'
         }
-    
-    def clean_file(self):
-        file = self.cleaned_data.get('file')
-        if file:
-            max_size = 5 * 1024 * 1024
-            if file.size > max_size:
-                raise forms.ValidationError(
-                    f'Размер файла не должен превышать 5MB. Ваш файл: {file.size/1024/1024:.1f}MB'
-                )
-            allowed_extensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
-            if not any(file.name.lower().endswith(ext) for ext in allowed_extensions):
-                raise forms.ValidationError(
-                    f'Разрешенные форматы: {", ".join(allowed_extensions)}'
-                )
-        return file
+
+
+class ManagerOrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['status', 'manager_comment']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'manager_comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        }
+
+class ManagerCommentForm(forms.ModelForm):
+    class Meta:
+        model = OrderComment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
+        }

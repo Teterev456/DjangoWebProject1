@@ -142,24 +142,15 @@ class Order(models.Model):
 admin.site.register(Order)
 
 class OrderComment(models.Model):
-    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='comments', verbose_name="Заказ")
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", null=True, blank=True)
-    
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField(verbose_name="Текст комментария")
-    is_edited = models.BooleanField(default=False, verbose_name="Редактирован")
-    
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    
-    file = models.FileField(upload_to='order_comments/%Y/%m/%d/', blank=True, null=True, verbose_name="Файл")
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"Комментарий к заказу #{self.order.id}"
-
+    
     class Meta:
-        db_table = "OrderComments"
-        verbose_name = "Комментарий к заказу"
-        verbose_name_plural = "Комментарии к заказам"
         ordering = ['-created_at']
 
 admin.site.register(OrderComment)

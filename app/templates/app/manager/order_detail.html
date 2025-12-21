@@ -1,0 +1,122 @@
+﻿{% extends "app/layout.html" %}
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Заказ №{{ order.order_number }}</h1>
+        <a href="{% url 'manager_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к заказам
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Левая колонка: информация о заказе -->
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Информация о заказе</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Клиент:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Email:</strong> {{ order.customer_email }}</p>
+                    <p><strong>Телефон:</strong> {{ order.customer_phone }}</p>
+                    <p><strong>Услуга:</strong> {{ order.service.title }}</p>
+                    <p><strong>Стоимость:</strong> {{ order.price }} ₽</p>
+                    <p><strong>Дата создания:</strong> {{ order.date|date:"d.m.Y H:i" }}</p>
+                </div>
+            </div>
+
+            <!-- Форма для статуса и сообщения клиенту -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Управление заказом</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="order">
+
+                        <div class="mb-3">
+                            {{ order_form.status.label_tag }}
+                            {{ order_form.status }}
+                            {% if order_form.status.errors %}
+                            <div class="text-danger">{{ order_form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ order_form.manager_comment.label_tag }}
+                            {{ order_form.manager_comment }}
+                            {% if order_form.manager_comment.errors %}
+                            <div class="text-danger">{{ order_form.manager_comment.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-save"></i> Сохранить изменения
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка: комментарии и сообщения -->
+        <div class="col-lg-6">
+            <!-- Внутренние комментарии менеджеров -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0">Чат с клиентом</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Существующие комментарии -->
+                    <div class="mb-3">
+                        {% for comment in comments %}
+                        <div class="border p-2 rounded mb-2 bg-light">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.author.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                            </div>
+                            <p class="mb-0">{{ comment.text }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">Нет комментариев</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Форма нового комментария -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="comment">
+
+                        <div class="mb-3">
+                            {{ comment_form.text.label_tag }}
+                            {{ comment_form.text }}
+                            {% if comment_form.text.errors %}
+                            <div class="text-danger">{{ comment_form.text.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="bi bi-chat"></i> Добавить комментарий
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Сообщение для клиента -->
+            {% if order.manager_comment %}
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h2 class="h5 mb-0">Сообщение для клиента</h2>
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <p class="mb-1">{{ order.manager_comment }}</p>
+                        <footer class="blockquote-footer">Отправлено: {{ order.updated_at|date:"d.m.Y H:i" }}</footer>
+                    </blockquote>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
