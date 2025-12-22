@@ -1,7 +1,24 @@
 ﻿{% extends "app/layout.html" %}
 {% block content %}
 <div class="manager-dashboard">
+    {% if user.is_authenticated %}
+    {% if user.is_staff %}
     <h1 class="manager-dashboard__title">Панель менеджера</h1>
+
+    <div class="catalog__filter">
+        <form class="catalog__form" method="get" action="">
+            <p>Статус заказа: </p>
+            <select class="catalog__select" name="status" onchange="this.form.submit()">
+                <option value="all" {% if current_status == 'all' %} selected {% endif %}>Все</option>
+                <option value="new" {% if current_status == 'new' %} selected {% endif %}>Новый</option>
+                <option value="processing" {% if current_status == 'processing' %} selected {% endif %}>В обработке</option>
+                <option value="confirmed" {% if current_status == 'confirmed' %} selected {% endif %}>Подтвержден</option>
+                <option value="in_progress" {% if current_status == 'in_progress' %} selected {% endif %}>В работе</option>
+                <option value="completed" {% if current_status == 'completed' %} selected {% endif %}>Завершен</option>
+                <option value="cancelled" {% if current_status == 'cancelled' %} selected {% endif %}>Отменен</option>
+            </select>
+        </form>
+    </div>
 
     <div class="manager-dashboard__cards">
         {% for order in orders %}
@@ -9,7 +26,9 @@
             <div class="manager-dashboard__card-info">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="manager-dashboard__card-title">Заказ №{{ order.order_number }}</h3>
-                    <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                    <span class="status-badge {{ order.get_status_color_class }}">
+                        {{ order.get_status_display }}
+                    </span>
                 </div>
                 <div class="card-body">
                     <p><strong>Клиент:</strong> {{ order.customer_name }}</p>
@@ -32,5 +51,15 @@
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div>
+        <h3 id="comment_add"> Для просмотра этой страницы у вас нет необходимых прав доступа</h3>
+    </div>
+    {% endif %}
+    {% else %}
+    <div>
+        <h3 id="comment_add"> Авторизуйтесь, для просмотра этой страницы </h3>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

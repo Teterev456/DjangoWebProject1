@@ -1,19 +1,20 @@
 ﻿{% extends "app/layout.html" %}
 {% block content %}
 <div class="container my-4">
+    {% if user.is_authenticated %}
+    {% if user.is_staff %}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Заказ №{{ order.order_number }}</h1>
         <a href="{% url 'manager_dashboard' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Назад к заказам
+            <i class=""></i> Назад к заказам
         </a>
     </div>
 
     <div class="row">
-        <!-- Левая колонка: информация о заказе -->
         <div class="col-lg-6">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="h5 mb-0">Информация о заказе</h2>
+                    <h2 class="">Информация о заказе</h2>
                 </div>
                 <div class="card-body">
                     <p><strong>Клиент:</strong> {{ order.customer_name }}</p>
@@ -25,10 +26,9 @@
                 </div>
             </div>
 
-            <!-- Форма для статуса и сообщения клиенту -->
             <div class="card">
                 <div class="card-header bg-success text-white">
-                    <h2 class="h5 mb-0">Управление заказом</h2>
+                    <h2 class="">Управление заказом</h2>
                 </div>
                 <div class="card-body">
                     <form method="POST">
@@ -59,16 +59,18 @@
             </div>
         </div>
 
-        <!-- Правая колонка: комментарии и сообщения -->
         <div class="col-lg-6">
-            <!-- Внутренние комментарии менеджеров -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white">
-                    <h2 class="h5 mb-0">Чат с клиентом</h2>
+                    <h2 class="">Общение с клиентом</h2>
                 </div>
                 <div class="card-body">
-                    <!-- Существующие комментарии -->
                     <div class="mb-3">
+                        <div>
+                            <h3>Комментарий пользователя к заказу</h3>
+                            <p>{{ order.customer_message }}</p>
+                        </div>
+                        <h3>Чат с клиентом</h3>
                         {% for comment in comments %}
                         <div class="border p-2 rounded mb-2 bg-light">
                             <div class="d-flex justify-content-between">
@@ -82,7 +84,6 @@
                         {% endfor %}
                     </div>
 
-                    <!-- Форма нового комментария -->
                     <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="form_type" value="comment">
@@ -102,7 +103,6 @@
                 </div>
             </div>
 
-            <!-- Сообщение для клиента -->
             {% if order.manager_comment %}
             <div class="card">
                 <div class="card-header bg-warning">
@@ -118,5 +118,15 @@
             {% endif %}
         </div>
     </div>
+    {% else %}
+    <div>
+        <h3 id="comment_add"> Для просмотра этой страницы у вас нет необходимых прав доступа</h3>
+    </div>
+    {% endif %}
+    {% else %}
+    <div>
+        <h3 id="comment_add"> Авторизуйтесь, для просмотра этой страницы </h3>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

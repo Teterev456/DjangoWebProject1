@@ -8,7 +8,7 @@
 <div class="MainText">
     <br>
     {% if post_1.image and post_1.image.url != '/media/temp.jpg' %}
-    <img id="blog_img" src="{{ post_1.image.url }}" alt=" Картинка статьи блога " width="200">
+    <img id="" src="{{ post_1.image.url }}" alt=" Картинка статьи" width="400">
     {% endif %}
     <br>
     <p> {{post_1.content|linebreaksbr}} </p>      {# вывод текста по абзацам#}

@@ -68,7 +68,7 @@ def detailcard(request, parametr):
                 f'Заказ успешно оформлен! Номер вашего заказа: #{order.id}. '
                 f'Мы свяжемся с вами в ближайшее время.'
             )
-            return redirect('catalog')
+            return redirect('myorders')
         else:
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
     else:
@@ -343,16 +343,16 @@ def is_manager(user):
 
 
 def manager_dashboard(request):
-    orders = Order.objects.all().order_by('-date')
-    status_filter = request.GET.get('status')
-    if status_filter:
-        orders = orders.filter(status=status_filter)
+    status_filter = request.GET.get('status', 'all')
+
+    if status_filter == 'all':
+        orders = Order.objects.all().order_by('-date')
+    else:
+        orders = Order.objects.filter(status=status_filter).order_by('-date')
     context = {
         'orders': orders,
-        'status_choices': Order.STATUS_CHOICES,
         'current_status': status_filter
     }
-    # Путь к шаблону в app/manager/
     return render(request, 'app/manager/dashboard.html', context)
 
 def manager_order_detail(request, order_id):
@@ -368,7 +368,6 @@ def manager_order_detail(request, order_id):
             if order_form.is_valid():
                 order_form.save()
                 messages.success(request, f"Статус заказа №{order.order_number} обновлен!")
-                # ПРАВИЛЬНЫЙ редирект с параметром order_id
                 return redirect('manager_order_detail', order_id=order_id)
         
         elif form_type == 'comment':
@@ -387,6 +386,5 @@ def manager_order_detail(request, order_id):
         'comment_form': comment_form,
         'comments': order.comments.all().order_by('-created_at')
     }
-    # Путь к шаблону в app/manager/
     return render(request, 'app/manager/order_detail.html', context)
 

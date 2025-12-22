@@ -1,13 +1,28 @@
 {% extends "app/layout.html" %}
 
 {% block content %}
-
-<h3>Добавить статью</h3>
-<form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+<div>
+    {% if user.is_authenticated %}
+    {% if user.is_staff %}
+    <h3>Добавить статью</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            {{ blogform.as_p }}
+            <button type="submit" class="save btn btn-default"> Сохранить статью </button>
+        </div>
+    </form>
+    {% else %}
     <div>
-        {{ blogform.as_p }}
-        <button type="submit" class="save btn btn-default"> Сохранить статью </button>
+        <h3 id="comment_add"> Для просмотра этой страницы у вас нет необходимых прав доступа</h3>
     </div>
-</form>
+    {% endif %}
+    {% else %}
+    <div>
+        <h3 id="comment_add"> Авторизуйтесь, для просмотра этой страницы </h3>
+    </div>
+    {% endif %}
+</div>
+
 
 {% endblock %}

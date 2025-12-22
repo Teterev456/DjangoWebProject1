@@ -22,3 +22,10 @@
 .main-page__subtitle{
     margin-bottom: 30px;
 }
+
+.main-page__info-text-title {
+    margin-left: 20px;
+    text-indent: 3em;
+    padding: 10px;
+    text-align:center;
+}

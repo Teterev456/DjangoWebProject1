@@ -27,7 +27,7 @@
     <div class="cards">
         {% for card in cards %}
         <div class="cards__card">
-            <img class="cards__card-img" src="{{ card.image.url }}" alt="Картинка товара" width="300" >
+            <img class="cards__card-img" src="{{ card.image.url }}" alt="Картинка товара" width="300" height="200" >
             <h2 class="cards__card-title"> {{card.title}} </h2>
             <hr />
             <p class="cards__card-description"> {{card.description}} </p>

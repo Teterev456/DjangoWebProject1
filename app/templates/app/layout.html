@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - PharmaVista</title>
+    <title>{{ title }} - Лера|Фото в Пскове</title>
     {% load staticfiles %}
-    <link rel="icon" href="../../static/app/content/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="../../static/app/content/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../../static/app/content/icon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../static/app/content/icon.png" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/cards.css' %}" />
@@ -34,7 +34,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/" class="navbar-brand"> <img class="img-logo" width="40" height="40" src="{% static 'app/content/new_logo_2.png' %}" alt="logo" /> </a>
+                <a href="/" class="navbar-brand"> <img class="img-logo" width="40" height="40" src="{% static 'app/content/new_logo_3.png' %}" alt="logo" /> </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -48,7 +48,7 @@
                     {% if user.is_staff %}
                     <li><a href="{% url 'manager_dashboard' %}">Заказы</a></li>
                     {% endif %}
-                    {% if user.is_superuser %}
+                    {% if user.is_staff %}
                     <li><a href="{% url 'newpost' %}">Добавить статью</a></li>
                     {% endif %}
 
@@ -62,7 +62,7 @@
 {% block content %}{% endblock %}
         <hr/>
         <footer>
-            <p>&copy; {{ year }} - PharmaVista</p>
+            <p>&copy; {{ year }} - Лера|Фото в Пскове</p>
         </footer>
     </div>
 

@@ -4,14 +4,16 @@
 {% block content %}
 
 <div class="main-page">
-    <h1 class="main-page__title">Главная страница:</h1>
+    <h1 class="main-page__title">Главная страница</h1>
 
     <div class="main-page__info">
         <img src="media/index.jpg" class="main-page__info-image" width="500" height="700" />
 
         <div class="main-page__info-txt">
+            <p class="main-page__info-text-title">
+                <i>Добро пожаловать в мир профессиональной фотографии вместе с Лерой!</i>
+            </p>
             <p class="main-page__info-text">
-                Добро пожаловать в мир профессиональной фотографии вместе с Лерой!
                 Я — фотограф из Пскова с опытом создания запоминающихся образов и живых портретов.
                 За моими работами следят более 296 человек, которые ценят искренность и мастерство в каждом кадре.
             </p>
@@ -40,36 +42,36 @@
             </ol>
             <div class="carousel-inner" role="listbox">
                 <div class="item active">
-                    <img src="{% static 'app/content/photo/banner1.jpg'%} " alt="Первый слайд" class="img-responsive" />
+                    <img src="{% static 'app/content/4.jpg'%} " alt="Первый слайд" class="img-responsive" />
                     <div class="carousel-caption" role="option">
                         <p>
-                            Внедрение высоких технологий в медицину
+                            В январе съёмок не будет
                             <br>
-                            <a class="btn btn-default" href="{% url 'blogpost' parametr=1 %}">
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=8 %}">
                                 Читать далее
                             </a>
                         </p>
                     </div>
                 </div>
                 <div class="item">
-                    <img src="{% static 'app/content/photo/banner2.jpg'%}" alt="Второй слайд" class="img-responsive" />
+                    <img src="{% static 'app/content/5.jpg'%}" alt="Второй слайд" class="img-responsive" />
                     <div class="carousel-caption" role="option">
                         <p>
-                            Расширение применения ИИ в Москве
+                            Картина "Дарья и чемодан"
                             <br>
-                            <a class="btn btn-default" href="{% url 'blogpost' parametr=2 %}">
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=10 %}">
                                 Читать далее
                             </a>
                         </p>
                     </div>
                 </div>
                 <div class="item">
-                    <img src=" {% static 'app/content/photo/banner3.png'%} " alt="Третий слайд" class="img-responsive" />
+                    <img src=" {% static 'app/content/6.jpg'%} " alt="Третий слайд" class="img-responsive" />
                     <div class="carousel-caption" role="option">
                         <p>
-                            Развитие наноробототехники в медицине
+                            Отличный съемочный день
                             <br>
-                            <a class="btn btn-default" href="{% url 'blogpost' parametr=3 %}">
+                            <a class="btn btn-default" href="{% url 'blogpost' parametr=9 %}">
                                 Читать далее
                             </a>
                         </p>

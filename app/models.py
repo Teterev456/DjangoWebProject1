@@ -115,6 +115,18 @@ class Order(models.Model):
     def __str__(self):
         return f"Заказ {self.order_number} - {self.service.title}"
     
+    def get_status_color_class(self):
+        """Возвращает CSS-класс в зависимости от статуса."""
+        color_map = {
+            'new': 'status-new',
+            'processing': 'status-processing',
+            'confirmed': 'status-confirmed',
+            'in_progress': 'status-in-progress',
+            'completed': 'status-completed',
+            'cancelled': 'status-cancelled',
+        }
+        return color_map.get(self.status, 'status-default')
+
     def save(self, *args, **kwargs):
         if not self.order_number:
             date_str = tz.now().strftime("%Y%m%d")
