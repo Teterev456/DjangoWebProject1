@@ -84,6 +84,7 @@
                         {% endfor %}
                     </div>
 
+                    {% if order.status != 'completed' and order.status != 'cancelled' %}
                     <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="form_type" value="comment">
@@ -100,18 +101,20 @@
                             <i class="bi bi-chat"></i> Добавить комментарий
                         </button>
                     </form>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
                 </div>
             </div>
 
             {% if order.manager_comment %}
             <div class="card">
                 <div class="card-header bg-warning">
-                    <h2 class="h5 mb-0">Сообщение для клиента</h2>
+                    <h2 class="">Заметка менеджера</h2>
                 </div>
                 <div class="card-body">
                     <blockquote class="blockquote mb-0">
                         <p class="mb-1">{{ order.manager_comment }}</p>
-                        <footer class="blockquote-footer">Отправлено: {{ order.updated_at|date:"d.m.Y H:i" }}</footer>
                     </blockquote>
                 </div>
             </div>

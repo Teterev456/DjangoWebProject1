@@ -7,18 +7,14 @@
         <form class="catalog__form" method="get" action="">
             <p>Выбор категории: </p>
             <select class="catalog__select" name="category" onchange="this.form.submit()">
-                <option value="all" {% if selected_category == 'all' %} selected {% endif %}>
+                <option value="all" {% if selected_category == 'all' %} selected{% endif %}>
                     Все
                 </option>
-                <option value="photo_sessions" {% if selected_category == 'photo_sessions' %} selected {% endif %}>
-                    Фотосессии
+                {% for cat in categories %}
+                <option value="{{ cat.slug }}" {% if cat.slug == selected_category %} selected{% endif %}>
+                    {{ cat.name }}
                 </option>
-                <option value="printed_products" {% if selected_category == 'printed_products' %} selected {% endif %}>
-                    Печатная продукция
-                </option>
-                <option value="service_packages" {% if selected_category == 'service_packages' %} selected {% endif %}>
-                    Пакеты услуг
-                </option>
+                {% endfor %}
             </select>
         </form>
     </div>

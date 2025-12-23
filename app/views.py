@@ -10,7 +10,7 @@ from .forms import AnketaForm, ManagerCommentForm, ManagerOrderForm, OrderCommen
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django.contrib import messages
-from .models import Blog, CardsProduct, Order
+from .models import Blog, CardsProduct, Category, Order
 from .models import Comment # использование модели комментариев
 from .forms import CommentForm # использование формы ввода комментария
 from .forms import BlogForm
@@ -33,9 +33,10 @@ def catalog(request):
     assert isinstance(request, HttpRequest)
     category = request.GET.get('category', 'all')
     cards = CardsProduct.objects.all()
+    category_slug = request.GET.get('category', 'all')
     if category != 'all':
-        cards = cards.filter(category=category)
-    categories = [choice[0] for choice in CardsProduct.CATEGORY_CHOICES]
+        cards = cards.filter(category__slug=category_slug)
+    categories = Category.objects.all()
     return render(
         request,
         'app/catalog.html',
@@ -87,7 +88,7 @@ def detailcard(request, parametr):
 
 def myorders(request):
     orders = Order.objects.filter(user=request.user).order_by('-date')
-    order_forms = []  # Список для хранения (заказ, форма)
+    order_forms = []
     
     if request.method == "POST":
         order_id = request.POST.get('order_id')
@@ -102,14 +103,12 @@ def myorders(request):
             messages.success(request, f"Комментарий к заказу #{order.order_number} добавлен!")
             return redirect('myorders')
         else:
-            # Если ошибка валидации - сохраняем форму с ошибками для этого заказа
             for o in orders:
                 if o.id == int(order_id):
                     order_forms.append((o, form))
                 else:
                     order_forms.append((o, OrderCommentForm()))
     else:
-        # Для GET-запроса все пустые формы
         for order in orders:
             order_forms.append((order, OrderCommentForm()))
     

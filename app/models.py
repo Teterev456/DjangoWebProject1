@@ -32,8 +32,8 @@ class Blog(models.Model):
     class Meta:
         db_table = "Posts" # имя таблицы для модели
         ordering = ["-posted"] # порядок сортировки данных в модели ("-" означает по убыванию)
-        verbose_name = "Статья блога" # имя, под которым модель будет отображаться в административном разделе (для одной статьи блога)
-        verbose_name_plural = "статьи блога" # тоже для всех статей блога
+        verbose_name = "Статья новости" # имя, под которым модель будет отображаться в административном разделе (для одной статьи блога)
+        verbose_name_plural = "Новости" # тоже для всех статей блога
 admin.site.register(Blog)
 
 class Comment(models.Model):
@@ -48,20 +48,39 @@ class Comment(models.Model):
     class Meta:
         db_table = "Comment"
         ordering = ["-date"]
-        verbose_name = "Комментарий к статье блога"
-        verbose_name_plural = "Комментарии к статьям блога"
+        verbose_name = "Комментарий к новости"
+        verbose_name_plural = "Комментарии к новостям"
 
 admin.site.register(Comment)
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название категории")
+    slug = models.SlugField(unique=True, verbose_name="URL-имя")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+admin.site.register(Category)
+
 class CardsProduct(models.Model):
-    image = models.ImageField(default = '', verbose_name = "Изображение товара")
-    title = models.CharField(max_length = 100, unique = True, verbose_name = "Заголовок")
-    description = models.TextField(verbose_name = "Краткое содержание")
-    content = models.TextField(verbose_name = "Полное содержание")
-    cost = models.DecimalField(max_digits = 10, default = 100.00, verbose_name="Цена", decimal_places = 2)
-    is_available = models.BooleanField(default = True, verbose_name = "В наличии")
-    CATEGORY_CHOICES = [('photo_sessions', 'Фотосессии'),('printed_products', 'Печатная продукция'),('service_packages', 'Пакеты услуг'),]
-    category = models.CharField(max_length=50,choices=CATEGORY_CHOICES,default='photo_sessions',verbose_name='Категория')
+    image = models.ImageField(default='', verbose_name="Изображение товара")
+    title = models.CharField(max_length=100, unique=True, verbose_name="Заголовок")
+    description = models.TextField(verbose_name="Краткое содержание")
+    content = models.TextField(verbose_name="Полное содержание")
+    cost = models.DecimalField(max_digits=10, default=100.00, verbose_name="Цена", decimal_places=2)
+    is_available = models.BooleanField(default=True, verbose_name="В наличии")
+
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Категория"
+    )
 
     def __str__(self):
         return self.title
@@ -76,18 +95,6 @@ class CardsProduct(models.Model):
 
 admin.site.register(CardsProduct)
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название категории")
-    slug = models.SlugField(unique=True, verbose_name="URL-имя")
-    
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-
-admin.site.register(Category)
 
 class Order(models.Model):
     STATUS_CHOICES = [('new', 'Новый'),
